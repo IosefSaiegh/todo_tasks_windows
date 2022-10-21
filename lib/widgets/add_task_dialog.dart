@@ -1,4 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 
 import 'package:todo_tasks/models/task_model.dart';
 import 'package:todo_tasks/pages/all_todos.dart';
@@ -21,18 +21,21 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
       builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: ProgressRing(),
+            child: CircularProgressIndicator(),
           );
         } else if (snapshot.connectionState == ConnectionState.done &&
             snapshot.hasData) {
-          return ContentDialog(
+          return AlertDialog(
             title: const Text('Add Task'),
             content: Form(
               autovalidateMode: AutovalidateMode.onUserInteraction,
               key: formKey,
               child: Wrap(
                 children: [
-                  TextFormBox(
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Title',
+                    ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -41,13 +44,12 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                       return null;
                     },
                     controller: _titleController,
-                    placeholder: 'Title',
                   ),
                   const SizedBox(
                     height: 10,
                     width: 10,
                   ),
-                  TextFormBox(
+                  TextFormField(
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -57,19 +59,21 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     },
                     maxLines: 4,
                     controller: _descriptionController,
-                    placeholder: 'Description',
+                    decoration: const InputDecoration(
+                      labelText: 'Description',
+                    ),
                   ),
                 ],
               ),
             ),
             actions: [
-              Button(
+              TextButton(
                 child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
-              FilledButton(
+              ElevatedButton(
                 onPressed: () {
                   const AllToDos().createState();
                   formKey.currentState!.save();
@@ -118,14 +122,16 @@ class _EditTaskDialogState extends State<EditTaskDialog> {
   final TextEditingController _descriptionController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return ContentDialog(
+    return AlertDialog(
       title: const Text('Edit Task'),
       content: Form(
         child: Wrap(
           children: [
-            TextFormBox(
+            TextFormField(
               controller: _titleController,
-              placeholder: 'Title',
+              decoration: const InputDecoration(
+                labelText: 'Title',
+              ),
               // initialValue: widget.task.name.isEmpty
               //     ? 'The task has no title'
               //     : widget.task.name,
@@ -134,25 +140,27 @@ class _EditTaskDialogState extends State<EditTaskDialog> {
               height: 10,
               width: 10,
             ),
-            TextFormBox(
+            TextFormField(
               maxLines: 4,
               // initialValue: widget.task.description.isEmpty
               //     ? 'The task has no description'
               //     : widget.task.description,
               controller: _descriptionController,
-              placeholder: 'Description',
+              decoration: const InputDecoration(
+                labelText: 'Description',
+              ),
             ),
           ],
         ),
       ),
       actions: [
-        Button(
+        TextButton(
           child: const Text('Cancel'),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        FilledButton(
+        ElevatedButton(
           onPressed: () {
             TasksDatabase.instance.update(
               widget.task.copy(

@@ -1,10 +1,9 @@
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:todo_tasks/pages/all_todos.dart';
 import 'package:todo_tasks/pages/completed_todos.dart';
 import 'package:todo_tasks/pages/not_completed.dart';
 
 import '../pages/importants.dart';
-import '../widgets/add_task_dialog.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,60 +15,38 @@ class _HomePageState extends State<HomePage> {
   int index = 0;
   @override
   Widget build(BuildContext context) {
-    return NavigationView(
-      pane: NavigationPane(
-        selected: index,
-        onChanged: (value) {
+    const widgetList = [
+      AllToDos(),
+      CompletedToDos(),
+      NotCompleted(),
+      ImportantsToDos()
+    ];
+    return Scaffold(
+      body: widgetList[index],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: index,
+        onTap: (value) {
           setState(() {
             index = value;
           });
         },
-        items: [
-          PaneItemHeader(
-            header: const Text(
-              'ToDo Tasks',
-              style: TextStyle(fontSize: 30),
-            ),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-          PaneItem(
-            icon: const Icon(FluentIcons.home),
-            title: const Text('Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.check_box),
+            label: 'Completed',
           ),
-          PaneItem(
-            icon: const Icon(FluentIcons.checkbox_composite),
-            title: const Text('Completed'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.check_box_outlined),
+            label: 'Not Completed',
           ),
-          PaneItem(
-            icon: const Icon(FluentIcons.checkbox),
-            title: const Text('Not Completed'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.star_border),
+            label: 'Importants',
           ),
-          PaneItem(
-            icon: const Icon(FluentIcons.favorite_list),
-            title: const Text('Importants'),
-          ),
-          PaneItemSeparator(),
-          PaneItemAction(
-            title: const Text(
-              'Add Task',
-              style: TextStyle(fontSize: 20),
-            ),
-            icon: const Icon(FluentIcons.add),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => AddTaskDialog(),
-              );
-            },
-          ),
-        ],
-      ),
-      content: NavigationBody(
-        index: index,
-        children: const [
-          AllToDos(),
-          CompletedToDos(),
-          NotCompleted(),
-          ImportantsToDos()
         ],
       ),
     );

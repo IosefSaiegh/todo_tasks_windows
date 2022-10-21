@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite_common/sqlite_api.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:todo_tasks/models/task_model.dart';
 
@@ -11,37 +10,33 @@ class TasksDatabase {
   TasksDatabase._init();
 
   Future<Database> get database async {
-    sqfliteFfiInit();
     if (_database != null) return _database!;
     _database = await _initDB('tasks.db');
     return _database!;
   }
 
   Future<Database> _initDB(String filePath) async {
-    var databaseFactory = databaseFactoryFfi;
     var databasePath = await getApplicationDocumentsDirectory();
     final path = join(databasePath.path, filePath);
-    return await databaseFactory.openDatabase(
+    return await openDatabase(
       path,
-      options: OpenDatabaseOptions(
-        version: 1,
-        onCreate: _createDB,
-        onOpen: (db) {
-          print(
-              'TasksDatabase: Database opened at ${databasePath.path}/$filePath');
-        },
-        singleInstance: true,
-        onConfigure: (db) {
-          print('TasksDatabase: Database configured');
-        },
-        onDowngrade: (db, oldVersion, newVersion) {
-          print('TasksDatabase: Database downgraded');
-        },
-        onUpgrade: (db, oldVersion, newVersion) {
-          print('TasksDatabase: Database upgraded');
-        },
-        readOnly: false,
-      ),
+      version: 1,
+      onCreate: _createDB,
+      onOpen: (db) {
+        print(
+            'TasksDatabase: Database opened at ${databasePath.path}/$filePath');
+      },
+      singleInstance: true,
+      onConfigure: (db) {
+        print('TasksDatabase: Database configured');
+      },
+      onDowngrade: (db, oldVersion, newVersion) {
+        print('TasksDatabase: Database downgraded');
+      },
+      onUpgrade: (db, oldVersion, newVersion) {
+        print('TasksDatabase: Database upgraded');
+      },
+      readOnly: false,
     );
   }
 
